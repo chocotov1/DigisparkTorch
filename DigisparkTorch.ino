@@ -214,7 +214,6 @@ void blink_led_multiple (uint16_t blink_duration_ms, uint8_t blink_count){
       if (i > 0){
          // subsequent blinks need leading delay to be visible
          delay(blink_duration_ms);
-         blink_led_once(blink_duration_ms);
       }
 
       blink_led_once(blink_duration_ms);      
