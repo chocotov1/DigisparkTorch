@@ -15,6 +15,7 @@
 #define NUM_LEDS    8
 CRGB leds[NUM_LEDS];
 uint8_t gHue = 0; // rotating "base color" used by many of the patterns
+CRGBPalette16 gPal; // Fire2012WithPalette
 
 // turn off RGB and on-board leds and put MCU to sleep after defined time
 // note that the RGB leds typically still draw power even when turned "off" and are set to black
@@ -37,7 +38,8 @@ uint8_t gHue = 0; // rotating "base color" used by many of the patterns
 #define PATTERN_RAINBOW_PAUSED         1
 #define PATTERN_RAINBOW_GLITTER        2
 #define PATTERN_RAINBOW_GLITTER_PAUSED 3
-#define LAST_PATTERN                   PATTERN_RAINBOW_GLITTER_PAUSED
+#define PATTERN_TORCH                  4
+#define LAST_PATTERN                   PATTERN_TORCH
 uint8_t current_pattern = 0;
 bool cycle_rainbow_hue_active = 1;
 
@@ -61,6 +63,7 @@ void setup(){
 
    // set master brightness control
    FastLED.setBrightness(BRIGHTNESS);
+   gPal = HeatColors_p; // Fire2012WithPalette
 
    pinMode(LED_BUILTIN, OUTPUT);
    pinMode(button_pin, INPUT_PULLUP);
@@ -231,7 +234,24 @@ void paint_current_pattern(){
       rainbow();
    } else if (current_pattern == PATTERN_RAINBOW_GLITTER || current_pattern == PATTERN_RAINBOW_GLITTER_PAUSED){
       rainbowWithGlitter();
-   }
+   } else if (current_pattern == PATTERN_TORCH){
+      // Add entropy to random number generator; we use a lot of it.
+      random16_add_entropy( random());
+
+      // Fourth, the most sophisticated: this one sets up a new palette every
+      // time through the loop, based on a hue that changes every time.
+      // The palette is a gradient from black, to a dark color based on the hue,
+      // to a light color based on the hue, to white.
+      //
+      //   static uint8_t hue = 0;
+      //   hue++;
+      //   CRGB darkcolor  = CHSV(hue,255,192); // pure hue, three-quarters brightness
+      //   CRGB lightcolor = CHSV(hue,128,255); // half 'whitened', full brightness
+      //   gPal = CRGBPalette16( CRGB::Black, darkcolor, lightcolor, CRGB::White);
+
+
+      Fire2012WithPalette(); // run simulation frame, using palette colors 
+   } 
 }
 
 void cycle_next_pattern(){
@@ -378,13 +398,7 @@ void Fire2012WithPalette()
       // for best results with color palettes.
       uint8_t colorindex = scale8( heat[j], 240);
       CRGB color = ColorFromPalette( gPal, colorindex);
-      int pixelnumber;
-      if( gReverseDirection ) {
-        pixelnumber = (NUM_LEDS-1) - j;
-      } else {
-        pixelnumber = j;
-      }
-      leds[pixelnumber] = color;
+      leds[j] = color;
     }
 }
 
