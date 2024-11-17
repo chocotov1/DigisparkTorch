@@ -6,6 +6,7 @@
 #include <avr/sleep.h>
 #include <avr/power.h>
 //#include <avr/wdt.h>
+#include <EEPROM.h>
 
 #define DATA_PIN    PIN_PB3
 //#define CLK_PIN   4
@@ -72,6 +73,8 @@ void setup(){
 
    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
    set_sleep_timeout(SLEEP_TIMEOUT_SECONDS);
+
+   load_config_eeprom();
 }
 
 // button state handling detects short, double or long press
@@ -86,6 +89,28 @@ ISR (PCINT0_vect){
      // disable pin change interrupt, reenable after processing button_pressed_state in loop
      GIMSK &= ~(1<<PCIE);
   }
+}
+
+#define EEPROM_ADDRESS_CURRENT_PATTERN 0
+#define EEPROM_ADDRESS_BRIGHTNESS      1
+#define EEPROM_ADDRESS_GHUE            2
+
+void load_config_eeprom(){
+   uint8_t current_pattern_eeprom = EEPROM.read(EEPROM_ADDRESS_CURRENT_PATTERN);
+
+   if (current_pattern_eeprom != 0xFF){
+       current_pattern = current_pattern_eeprom;
+       setup_pattern(current_pattern);
+       
+       FastLED.setBrightness(EEPROM.read(EEPROM_ADDRESS_BRIGHTNESS));
+       gHue = EEPROM.read(EEPROM_ADDRESS_GHUE);
+   }
+}
+
+void update_config_eeprom(){
+   EEPROM.update(EEPROM_ADDRESS_CURRENT_PATTERN, current_pattern);
+   EEPROM.update(EEPROM_ADDRESS_BRIGHTNESS, FastLED.getBrightness());
+   EEPROM.update(EEPROM_ADDRESS_GHUE, gHue);
 }
 
 void set_sleep_timeout(uint16_t timeout_seconds){
@@ -194,6 +219,8 @@ void handle_button_pressed_state(){
       blink_led_once(50);
       cycle_next_pattern();
    } else if (button_pressed_state == BUTTON_PRESSED_DOUBLE){
+      // store current pattern and brightness in persistent memory
+      update_config_eeprom();
       blink_led_multiple(200, 2);
    } else if (button_pressed_state == BUTTON_PRESSED_LONG){
       // toggle brightness_change_direction
