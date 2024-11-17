@@ -363,12 +363,12 @@ void change_brightness(){
 // COOLING: How much does the air cool as it rises?
 // Less cooling = taller flames.  More cooling = shorter flames.
 // Default 55, suggested range 20-100 
-#define COOLING  55
+//#define COOLING  55
 
 // SPARKING: What chance (out of 255) is there that a new spark will be lit?
 // Higher chance = more roaring fire.  Lower chance = more flickery fire.
 // Default 120, suggested range 50-200.
-#define SPARKING 120
+#define SPARKING 15
 
 
 void Fire2012WithPalette()
@@ -378,7 +378,7 @@ void Fire2012WithPalette()
 
   // Step 1.  Cool down every cell a little
     for( int i = 0; i < NUM_LEDS; i++) {
-      heat[i] = qsub8( heat[i],  random8(0, ((COOLING * 10) / NUM_LEDS) + 2));
+      heat[i] = qsub8( heat[i],  random8(0, 3));
     }
   
     // Step 2.  Heat from each cell drifts 'up' and diffuses a little
@@ -388,15 +388,18 @@ void Fire2012WithPalette()
     
     // Step 3.  Randomly ignite new 'sparks' of heat near the bottom
     if( random8() < SPARKING ) {
-      int y = random8(7);
+      int y = random8(4);
       heat[y] = qadd8( heat[y], random8(160,255) );
+      //heat[y] = qadd8( heat[y], random8(160,220) );
     }
 
     // Step 4.  Map from heat cells to LED colors
     for( int j = 0; j < NUM_LEDS; j++) {
       // Scale the heat value from 0-255 down to 0-240
       // for best results with color palettes.
-      uint8_t colorindex = scale8( heat[j], 240);
+      uint8_t colorindex = scale8( heat[j], 100);
+
+
       CRGB color = ColorFromPalette( gPal, colorindex);
       leds[j] = color;
     }
