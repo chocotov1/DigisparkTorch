@@ -20,7 +20,8 @@ CRGBPalette16 gPal; // Fire2012WithPalette
 
 // turn off RGB and on-board leds and put MCU to sleep after defined time
 // note that the RGB leds typically still draw power even when turned "off" and are set to black
-#define SLEEP_TIMEOUT_SECONDS 14400 // approximately 4 hours
+#define SLEEP_TIMEOUT_MILLIS 14400000 // approximately 4 hours
+
 
 //#define LED_BUILTIN_DEFAULT_STATE 0 // on-board led normally turned off
 #define LED_BUILTIN_DEFAULT_STATE 1   // use more power with on-board led turned on: can help to reach the low power cutoff of many powerbanks
@@ -47,7 +48,7 @@ bool cycle_rainbow_hue_active = 1;
 volatile byte button_pressed_state = 0;
 byte button_pin = PIN_PB0; // PCINT0 -> Pin Change Interrupt
 
-uint32_t sleep_time_millis = 0;
+uint32_t wakeup_time_millis = 0;
 
 bool change_brightness_active    = 0;
 bool brightness_change_direction = 0;
@@ -72,7 +73,6 @@ void setup(){
    digitalWrite(LED_BUILTIN, LED_BUILTIN_DEFAULT_STATE);
 
    set_sleep_mode(SLEEP_MODE_PWR_DOWN);
-   set_sleep_timeout(SLEEP_TIMEOUT_SECONDS);
 
    load_config_eeprom();
 }
@@ -113,17 +113,13 @@ void update_config_eeprom(){
    EEPROM.update(EEPROM_ADDRESS_GHUE, gHue);
 }
 
-void set_sleep_timeout(uint16_t timeout_seconds){
-   sleep_time_millis = millis() + timeout_seconds * 1000UL;
-}
-
 void check_sleep_timeout(){
    if (button_pressed_state || !button_state()){
       // don't sleep when there's button activity
       return;
    }
      
-   if (millis() >= sleep_time_millis){
+   if (millis() - wakeup_time_millis >= SLEEP_TIMEOUT_MILLIS){
       turn_off_all_leds();
       go_to_sleep();
 
@@ -133,8 +129,7 @@ void check_sleep_timeout(){
 
       digitalWrite(LED_BUILTIN, LED_BUILTIN_DEFAULT_STATE);
 
-      // set new timeout after waking up:
-      set_sleep_timeout(SLEEP_TIMEOUT_SECONDS);
+      wakeup_time_millis = millis();
    }
 }
 
