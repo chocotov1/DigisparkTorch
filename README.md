@@ -62,4 +62,4 @@ Global variables use 248 bytes (48%) of dynamic memory, leaving 264 bytes for lo
 </pre>
 
 ## Power consumption 
-At max brightnress i've seen around 0.6 and 0.7 W (120 mA and 140 mA at 5 V).
+At max brightness i've seen around 0.6 and 0.7 W (120 mA and 140 mA at 5 V).
