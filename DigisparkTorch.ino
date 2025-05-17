@@ -91,14 +91,14 @@ ISR (PCINT0_vect){
   }
 }
 
-#define EEPROM_ADDRESS_CURRENT_PATTERN 0
-#define EEPROM_ADDRESS_BRIGHTNESS      1
-#define EEPROM_ADDRESS_GHUE            2
+#define EEPROM_ADDRESS_CURRENT_PATTERN 1
+#define EEPROM_ADDRESS_BRIGHTNESS      2
+#define EEPROM_ADDRESS_GHUE            3
 
 void load_config_eeprom(){
    uint8_t current_pattern_eeprom = EEPROM.read(EEPROM_ADDRESS_CURRENT_PATTERN);
 
-   if (current_pattern_eeprom != 0xFF){
+   if (current_pattern_eeprom <= LAST_PATTERN){
        current_pattern = current_pattern_eeprom;
        setup_pattern(current_pattern);
        
