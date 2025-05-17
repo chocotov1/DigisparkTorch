@@ -9,7 +9,7 @@ LED effect lamp powered by Digispark, 8 RGB LEDs and the [FastLED](https://githu
 
 ## Hardware
 - Digispark (ATtiny85) running at 16 MHz with the [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore) (No Bootloader)
-- 8 SK6812 RGB LEDs
+- 8 RGB LEDs (SK6812, WS2812B)
 - button mod (details below) with debouncing in software
 
 ## Gallery
@@ -52,7 +52,9 @@ Afterwards:<br>
 ISP programming setup with Atmel-ICE:
 <img src="https://raw.githubusercontent.com/chocotov1/DigisparkTorch/master/media/ISP_progamming_Atmel-ICE.jpg">
 
-Using the 'No Bootloader' variants of [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore) removes the 5 second boot delay that the Digisparks normally have and also saves some flash memory. It is recommended to turn on B.O.D. for better integrity of the stored settings in EEPROM:
+Using the 'No Bootloader' variants of [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore) removes the 5 second boot delay that the Digisparks normally have and also saves some flash memory.
+
+It is recommended to turn on B.O.D. for better integrity of the stored settings in EEPROM:
 <img src="https://raw.githubusercontent.com/chocotov1/DigisparkTorch/master/media/ATTinyCore_Burn_Bootloader_16MHz_No_Bootloader.png">
 
 ## Memory usage
