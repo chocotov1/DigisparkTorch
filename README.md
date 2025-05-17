@@ -52,12 +52,12 @@ Afterwards:<br>
 ISP programming setup with Atmel-ICE:
 <img src="https://raw.githubusercontent.com/chocotov1/DigisparkTorch/master/media/ISP_progamming_Atmel-ICE.jpg">
 
-Using the 'No Bootloader' variants of [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore) removes the 5 second boot delay that the Digisparks normally have and also saves some flash memory:
+Using the 'No Bootloader' variants of [ATTinyCore](https://github.com/SpenceKonde/ATTinyCore) removes the 5 second boot delay that the Digisparks normally have and also saves some flash memory. It is recommended to turn on B.O.D. for better integrity of the stored settings in EEPROM:
 <img src="https://raw.githubusercontent.com/chocotov1/DigisparkTorch/master/media/ATTinyCore_Burn_Bootloader_16MHz_No_Bootloader.png">
 
 ## Memory usage
 <pre>
-Sketch uses 6140 bytes (74%) of program storage space. Maximum is 8192 bytes.
+Sketch uses 6142 bytes (74%) of program storage space. Maximum is 8192 bytes.
 Global variables use 248 bytes (48%) of dynamic memory, leaving 264 bytes for local variables. Maximum is 512 bytes.
 </pre>
 
